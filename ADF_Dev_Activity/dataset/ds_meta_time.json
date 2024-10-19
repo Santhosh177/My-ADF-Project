@@ -1,0 +1,25 @@
+{
+	"name": "ds_meta_time",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_meta_time",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"filetime": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": {
+					"value": "@dataset().filetime",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}
