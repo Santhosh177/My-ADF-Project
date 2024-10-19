@@ -1,0 +1,25 @@
+{
+	"name": "Ds_Copy_Files",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_copy_files",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}

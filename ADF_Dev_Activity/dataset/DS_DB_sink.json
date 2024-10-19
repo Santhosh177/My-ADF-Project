@@ -1,0 +1,23 @@
+{
+	"name": "DS_DB_sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_DB_sink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "tables",
+				"fileSystem": "all-type-files"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

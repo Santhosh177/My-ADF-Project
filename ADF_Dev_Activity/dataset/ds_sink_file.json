@@ -1,0 +1,17 @@
+{
+	"name": "ds_sink_file",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sink_file",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "all-type-files"
+			}
+		}
+	}
+}

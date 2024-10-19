@@ -1,0 +1,16 @@
+{
+	"name": "ds_db_source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_db_source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "PostgreSqlV2Table",
+		"schema": [],
+		"typeProperties": {
+			"schema": "public",
+			"table": "filetrackingtable"
+		}
+	}
+}

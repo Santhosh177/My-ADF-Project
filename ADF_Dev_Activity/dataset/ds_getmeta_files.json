@@ -1,0 +1,16 @@
+{
+	"name": "ds_getmeta_files",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_getmeta_files",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation"
+			}
+		}
+	}
+}
