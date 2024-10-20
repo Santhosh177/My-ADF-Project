@@ -7,9 +7,17 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "DemoDev1Adf"
 		},
+		"LS_DB_cloud_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_DB_cloud'"
+		},
 		"ls_DB_sink_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_DB_sink'"
+		},
+		"ls_DB_sp_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_DB_sp'"
 		},
 		"ls_copy_files_password": {
 			"type": "secureString",
@@ -31,9 +39,33 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_sink_file'"
 		},
+		"LS_DB_cloud_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "connection-server.database.windows.net"
+		},
+		"LS_DB_cloud_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "connection_db"
+		},
+		"LS_DB_cloud_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminn"
+		},
 		"ls_DB_sink_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"ls_DB_sp_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "connection-server.database.windows.net"
+		},
+		"ls_DB_sp_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "connection_db"
+		},
+		"ls_DB_sp_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminn"
 		},
 		"ls_copy_files_properties_typeProperties_host": {
 			"type": "string",
@@ -102,8 +134,14 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"LS_DB_cloud_password": {
+						"value": "[parameters('LS_DB_cloud_password')]"
+					},
 					"ls_DB_sink_accountKey": {
 						"value": "[parameters('ls_DB_sink_accountKey')]"
+					},
+					"ls_DB_sp_password": {
+						"value": "[parameters('ls_DB_sp_password')]"
 					},
 					"ls_sink_file_accountKey": {
 						"value": "[parameters('ls_sink_file_accountKey')]"
@@ -120,8 +158,26 @@
 					"ls_meta_time_password": {
 						"value": "[parameters('ls_meta_time_password')]"
 					},
+					"LS_DB_cloud_properties_typeProperties_server": {
+						"value": "[parameters('LS_DB_cloud_properties_typeProperties_server')]"
+					},
+					"LS_DB_cloud_properties_typeProperties_database": {
+						"value": "[parameters('LS_DB_cloud_properties_typeProperties_database')]"
+					},
+					"LS_DB_cloud_properties_typeProperties_userName": {
+						"value": "[parameters('LS_DB_cloud_properties_typeProperties_userName')]"
+					},
 					"ls_DB_sink_properties_typeProperties_url": {
 						"value": "[parameters('ls_DB_sink_properties_typeProperties_url')]"
+					},
+					"ls_DB_sp_properties_typeProperties_server": {
+						"value": "[parameters('ls_DB_sp_properties_typeProperties_server')]"
+					},
+					"ls_DB_sp_properties_typeProperties_database": {
+						"value": "[parameters('ls_DB_sp_properties_typeProperties_database')]"
+					},
+					"ls_DB_sp_properties_typeProperties_userName": {
+						"value": "[parameters('ls_DB_sp_properties_typeProperties_userName')]"
 					},
 					"ls_sink_file_properties_typeProperties_url": {
 						"value": "[parameters('ls_sink_file_properties_typeProperties_url')]"

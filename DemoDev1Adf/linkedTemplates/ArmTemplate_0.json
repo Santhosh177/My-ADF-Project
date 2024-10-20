@@ -7,9 +7,17 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "DemoDev1Adf"
 		},
+		"LS_DB_cloud_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_DB_cloud'"
+		},
 		"ls_DB_sink_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_DB_sink'"
+		},
+		"ls_DB_sp_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_DB_sp'"
 		},
 		"ls_sink_file_accountKey": {
 			"type": "secureString",
@@ -31,9 +39,33 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_meta_time'"
 		},
+		"LS_DB_cloud_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "connection-server.database.windows.net"
+		},
+		"LS_DB_cloud_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "connection_db"
+		},
+		"LS_DB_cloud_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminn"
+		},
 		"ls_DB_sink_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"ls_DB_sp_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "connection-server.database.windows.net"
+		},
+		"ls_DB_sp_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "connection_db"
+		},
+		"ls_DB_sp_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminn"
 		},
 		"ls_sink_file_properties_typeProperties_url": {
 			"type": "string",
@@ -81,6 +113,28 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_DB_cloud')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('LS_DB_cloud_properties_typeProperties_server')]",
+					"database": "[parameters('LS_DB_cloud_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_DB_cloud_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_DB_cloud_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ls_DB_sink')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -92,6 +146,28 @@
 					"accountKey": {
 						"type": "SecureString",
 						"value": "[parameters('ls_DB_sink_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_DB_sp')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('ls_DB_sp_properties_typeProperties_server')]",
+					"database": "[parameters('ls_DB_sp_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_DB_sp_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_DB_sp_password')]"
 					}
 				}
 			},
@@ -123,6 +199,36 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_DB_Cloud')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_DB_cloud",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FileName",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModifiedTimestamp",
+						"type": "timestamp"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "FileTrackingTable"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_DB_cloud')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DS_DB_sink')]",
@@ -435,11 +541,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "PostgreSqlV2Source",
-								"query": "SELECT filename, Lastmodifiedtimestamp \nFROM public.filetrackingtable\n"
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select FileName, LastModifiedTimestamp\nfrom FileTrackingTable",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
 							},
 							"dataset": {
-								"referenceName": "ds_db_source",
+								"referenceName": "DS_DB_Cloud",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -597,6 +705,49 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "Stored_procedure",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ForEach",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_insert_file_tracking]",
+							"storedProcedureParameters": {
+								"FileName": {
+									"value": {
+										"value": "@activity('Get Meta_time').output.itemName",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"LastModifiedTimestamp": {
+									"value": {
+										"value": "@activity('Get Meta_time').output.lastModified",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_DB_sp",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"policy": {
@@ -606,7 +757,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_getmeta_files')]",
-				"[concat(variables('factoryId'), '/datasets/ds_db_source')]",
+				"[concat(variables('factoryId'), '/datasets/DS_DB_Cloud')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_DB_sp')]",
 				"[concat(variables('factoryId'), '/datasets/Ds_Copy_Files')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sink_file')]",
 				"[concat(variables('factoryId'), '/datasets/ds_meta_time')]"

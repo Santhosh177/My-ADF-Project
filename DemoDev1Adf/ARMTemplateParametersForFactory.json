@@ -5,7 +5,13 @@
 		"factoryName": {
 			"value": "DemoDev1Adf"
 		},
+		"LS_DB_cloud_password": {
+			"value": ""
+		},
 		"ls_DB_sink_accountKey": {
+			"value": ""
+		},
+		"ls_DB_sp_password": {
 			"value": ""
 		},
 		"ls_copy_files_password": {
@@ -23,8 +29,26 @@
 		"ls_sink_file_accountKey": {
 			"value": ""
 		},
+		"LS_DB_cloud_properties_typeProperties_server": {
+			"value": "connection-server.database.windows.net"
+		},
+		"LS_DB_cloud_properties_typeProperties_database": {
+			"value": "connection_db"
+		},
+		"LS_DB_cloud_properties_typeProperties_userName": {
+			"value": "adminn"
+		},
 		"ls_DB_sink_properties_typeProperties_url": {
 			"value": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"ls_DB_sp_properties_typeProperties_server": {
+			"value": "connection-server.database.windows.net"
+		},
+		"ls_DB_sp_properties_typeProperties_database": {
+			"value": "connection_db"
+		},
+		"ls_DB_sp_properties_typeProperties_userName": {
+			"value": "adminn"
 		},
 		"ls_copy_files_properties_typeProperties_host": {
 			"value": "C:\\Users\\426078\\local_cloud"
