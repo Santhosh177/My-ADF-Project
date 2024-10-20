@@ -1,0 +1,161 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "DemoDev1Adf"
+		},
+		"ls_DB_sink_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_DB_sink'"
+		},
+		"ls_copy_files_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_copy_files'"
+		},
+		"ls_db_source_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_db_source'"
+		},
+		"ls_getmeta_files_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_getmeta_files'"
+		},
+		"ls_meta_time_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_meta_time'"
+		},
+		"ls_sink_file_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_sink_file'"
+		},
+		"ls_DB_sink_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"ls_copy_files_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_copy_files_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "426078@conneqtcorp.com"
+		},
+		"ls_db_source_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "localhost"
+		},
+		"ls_db_source_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "myappdb"
+		},
+		"ls_db_source_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "myappuser"
+		},
+		"ls_getmeta_files_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_getmeta_files_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "426078@conneqtcorp.com"
+		},
+		"ls_meta_time_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_meta_time_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "426078@conneqtcorp.com"
+		},
+		"ls_sink_file_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "DemoDev1Adf_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"ls_DB_sink_accountKey": {
+						"value": "[parameters('ls_DB_sink_accountKey')]"
+					},
+					"ls_sink_file_accountKey": {
+						"value": "[parameters('ls_sink_file_accountKey')]"
+					},
+					"ls_copy_files_password": {
+						"value": "[parameters('ls_copy_files_password')]"
+					},
+					"ls_db_source_password": {
+						"value": "[parameters('ls_db_source_password')]"
+					},
+					"ls_getmeta_files_password": {
+						"value": "[parameters('ls_getmeta_files_password')]"
+					},
+					"ls_meta_time_password": {
+						"value": "[parameters('ls_meta_time_password')]"
+					},
+					"ls_DB_sink_properties_typeProperties_url": {
+						"value": "[parameters('ls_DB_sink_properties_typeProperties_url')]"
+					},
+					"ls_sink_file_properties_typeProperties_url": {
+						"value": "[parameters('ls_sink_file_properties_typeProperties_url')]"
+					},
+					"ls_copy_files_properties_typeProperties_host": {
+						"value": "[parameters('ls_copy_files_properties_typeProperties_host')]"
+					},
+					"ls_copy_files_properties_typeProperties_userId": {
+						"value": "[parameters('ls_copy_files_properties_typeProperties_userId')]"
+					},
+					"ls_db_source_properties_typeProperties_server": {
+						"value": "[parameters('ls_db_source_properties_typeProperties_server')]"
+					},
+					"ls_db_source_properties_typeProperties_database": {
+						"value": "[parameters('ls_db_source_properties_typeProperties_database')]"
+					},
+					"ls_db_source_properties_typeProperties_username": {
+						"value": "[parameters('ls_db_source_properties_typeProperties_username')]"
+					},
+					"ls_getmeta_files_properties_typeProperties_host": {
+						"value": "[parameters('ls_getmeta_files_properties_typeProperties_host')]"
+					},
+					"ls_getmeta_files_properties_typeProperties_userId": {
+						"value": "[parameters('ls_getmeta_files_properties_typeProperties_userId')]"
+					},
+					"ls_meta_time_properties_typeProperties_host": {
+						"value": "[parameters('ls_meta_time_properties_typeProperties_host')]"
+					},
+					"ls_meta_time_properties_typeProperties_userId": {
+						"value": "[parameters('ls_meta_time_properties_typeProperties_userId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

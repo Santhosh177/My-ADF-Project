@@ -1,0 +1,66 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "DemoDev1Adf"
+		},
+		"ls_DB_sink_accountKey": {
+			"value": ""
+		},
+		"ls_copy_files_password": {
+			"value": ""
+		},
+		"ls_db_source_password": {
+			"value": ""
+		},
+		"ls_getmeta_files_password": {
+			"value": ""
+		},
+		"ls_meta_time_password": {
+			"value": ""
+		},
+		"ls_sink_file_accountKey": {
+			"value": ""
+		},
+		"ls_DB_sink_properties_typeProperties_url": {
+			"value": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"ls_copy_files_properties_typeProperties_host": {
+			"value": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_copy_files_properties_typeProperties_userId": {
+			"value": "426078@conneqtcorp.com"
+		},
+		"ls_db_source_properties_typeProperties_server": {
+			"value": "localhost"
+		},
+		"ls_db_source_properties_typeProperties_database": {
+			"value": "myappdb"
+		},
+		"ls_db_source_properties_typeProperties_username": {
+			"value": "myappuser"
+		},
+		"ls_getmeta_files_properties_typeProperties_host": {
+			"value": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_getmeta_files_properties_typeProperties_userId": {
+			"value": "426078@conneqtcorp.com"
+		},
+		"ls_meta_time_properties_typeProperties_host": {
+			"value": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_meta_time_properties_typeProperties_userId": {
+			"value": "426078@conneqtcorp.com"
+		},
+		"ls_sink_file_properties_typeProperties_url": {
+			"value": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

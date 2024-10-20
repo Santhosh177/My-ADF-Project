@@ -1,0 +1,616 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "DemoDev1Adf"
+		},
+		"ls_DB_sink_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_DB_sink'"
+		},
+		"ls_copy_files_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_copy_files'"
+		},
+		"ls_db_source_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_db_source'"
+		},
+		"ls_getmeta_files_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_getmeta_files'"
+		},
+		"ls_meta_time_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_meta_time'"
+		},
+		"ls_sink_file_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_sink_file'"
+		},
+		"ls_DB_sink_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"ls_copy_files_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_copy_files_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "426078@conneqtcorp.com"
+		},
+		"ls_db_source_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "localhost"
+		},
+		"ls_db_source_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "myappdb"
+		},
+		"ls_db_source_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "myappuser"
+		},
+		"ls_getmeta_files_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_getmeta_files_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "426078@conneqtcorp.com"
+		},
+		"ls_meta_time_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\426078\\local_cloud"
+		},
+		"ls_meta_time_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "426078@conneqtcorp.com"
+		},
+		"ls_sink_file_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://transformed1storage.dfs.core.windows.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy_Activity')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get_Meta_lcal_files",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "ds_getmeta_files",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems",
+								"lastModified"
+							],
+							"storeSettings": {
+								"type": "FileServerReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "PostgreSqlV2Source",
+								"query": "SELECT filename, Lastmodifiedtimestamp \nFROM public.filetrackingtable\n"
+							},
+							"dataset": {
+								"referenceName": "ds_db_source",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "BinarySource",
+											"storeSettings": {
+												"type": "FileServerReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "BinaryReadSettings"
+											}
+										},
+										"sink": {
+											"type": "BinarySink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "Ds_Copy_Files",
+											"type": "DatasetReference",
+											"parameters": {
+												"filename": {
+													"value": "@item().name",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ds_sink_file",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Filter1",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get_Meta_lcal_files').output.childItems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@or(\n    not(contains(activity('Lookup1').output.value, item().name)),\n    and(\n        equals(item().name, activity('Lookup1').output.firstRow.filename),\n        greater(item().lastModified, activity('Lookup1').output.firstRow.lastmodifiedtimestamp)\n    )\n)\n",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get_Meta_lcal_files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get_Meta_lcal_files').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Get Meta_time",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "ds_meta_time",
+											"type": "DatasetReference",
+											"parameters": {
+												"filetime": {
+													"value": "@item().name",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"lastModified"
+										],
+										"storeSettings": {
+											"type": "FileServerReadSettings",
+											"recursive": true,
+											"enablePartitionDiscovery": false
+										},
+										"formatSettings": {
+											"type": "BinaryReadSettings"
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_getmeta_files')]",
+				"[concat(variables('factoryId'), '/datasets/ds_db_source')]",
+				"[concat(variables('factoryId'), '/datasets/Ds_Copy_Files')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink_file')]",
+				"[concat(variables('factoryId'), '/datasets/ds_meta_time')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_DB_sink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_DB_sink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "tables",
+						"fileSystem": "all-type-files"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_DB_sink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ds_Copy_Files')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_copy_files",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_copy_files')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_db_source')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_db_source",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "PostgreSqlV2Table",
+				"schema": [],
+				"typeProperties": {
+					"schema": "public",
+					"table": "filetrackingtable"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_db_source')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_getmeta_files')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_getmeta_files",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_getmeta_files')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_meta_time')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_meta_time",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"filetime": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": {
+							"value": "@dataset().filetime",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_meta_time')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_sink_file')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_sink_file",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "all-type-files"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_sink_file')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_DB_sink')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_DB_sink_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_DB_sink_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_copy_files')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('ls_copy_files_properties_typeProperties_host')]",
+					"userId": "[parameters('ls_copy_files_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_copy_files_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "IntegrationRuntimes",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IntegrationRuntimes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_db_source')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "PostgreSqlV2",
+				"typeProperties": {
+					"server": "[parameters('ls_db_source_properties_typeProperties_server')]",
+					"port": "5433",
+					"database": "[parameters('ls_db_source_properties_typeProperties_database')]",
+					"username": "[parameters('ls_db_source_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_db_source_password')]"
+					},
+					"sslMode": 0,
+					"authenticationType": "Basic"
+				},
+				"connectVia": {
+					"referenceName": "IntegrationRuntimes",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IntegrationRuntimes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_getmeta_files')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('ls_getmeta_files_properties_typeProperties_host')]",
+					"userId": "[parameters('ls_getmeta_files_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_getmeta_files_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "IntegrationRuntimes",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IntegrationRuntimes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_meta_time')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('ls_meta_time_properties_typeProperties_host')]",
+					"userId": "[parameters('ls_meta_time_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_meta_time_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "IntegrationRuntimes",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IntegrationRuntimes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_sink_file')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_sink_file_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sink_file_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IntegrationRuntimes')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		}
+	]
+}
