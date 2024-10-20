@@ -54,11 +54,13 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "PostgreSqlV2Source",
-						"query": "SELECT filename, Lastmodifiedtimestamp \nFROM public.filetrackingtable\n"
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select FileName, LastModifiedTimestamp\nfrom FileTrackingTable",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "ds_db_source",
+						"referenceName": "DS_DB_Cloud",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
@@ -204,6 +206,7 @@
 								],
 								"storeSettings": {
 									"type": "FileServerReadSettings",
+									"recursive": true,
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -212,6 +215,49 @@
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "Stored_procedure",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ForEach",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_insert_file_tracking]",
+					"storedProcedureParameters": {
+						"FileName": {
+							"value": {
+								"value": "@activity('Get Meta_time').output.itemName",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"LastModifiedTimestamp": {
+							"value": {
+								"value": "@activity('Get Meta_time').output.lastModified",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_DB_sp",
+					"type": "LinkedServiceReference"
 				}
 			}
 		],

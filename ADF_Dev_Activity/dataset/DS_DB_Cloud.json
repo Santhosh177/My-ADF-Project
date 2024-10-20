@@ -1,0 +1,25 @@
+{
+	"name": "DS_DB_Cloud",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DB_cloud",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FileName",
+				"type": "varchar"
+			},
+			{
+				"name": "LastModifiedTimestamp",
+				"type": "timestamp"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "FileTrackingTable"
+		}
+	}
+}
