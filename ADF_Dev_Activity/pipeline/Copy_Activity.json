@@ -38,7 +38,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "ForEach1",
+						"activity": "Get_meta_for_eachfile",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -161,7 +161,7 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "Get_meta_for_eachfile",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -213,13 +213,33 @@
 									"type": "BinaryReadSettings"
 								}
 							}
+						},
+						{
+							"name": "Append_variable",
+							"type": "AppendVariable",
+							"dependsOn": [
+								{
+									"activity": "Get Meta_time",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FileMetadataArray",
+								"value": {
+									"FileName": "@item().name",
+									"LastModified": "@activity('Get Meta_time').output.lastModified"
+								}
+							}
 						}
 					]
 				}
 			},
 			{
-				"name": "Stored_procedure",
-				"type": "SqlServerStoredProcedure",
+				"name": "ForEach1",
+				"type": "ForEach",
 				"dependsOn": [
 					{
 						"activity": "ForEach",
@@ -228,39 +248,52 @@
 						]
 					}
 				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[sp_insert_file_tracking]",
-					"storedProcedureParameters": {
-						"FileName": {
-							"value": {
-								"value": "@activity('Get Meta_time').output.itemName",
-								"type": "Expression"
+					"items": {
+						"value": "@variables('FileMetadataArray')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Stored procedure1",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
 							},
-							"type": "String"
-						},
-						"LastModifiedTimestamp": {
-							"value": {
-								"value": "@activity('Get Meta_time').output.lastModified",
-								"type": "Expression"
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[sp_insert_file_tracking]",
+								"storedProcedureParameters": {
+									"FileName": {
+										"value": "@item().FileName",
+										"type": "String"
+									},
+									"LastModifiedTimestamp": {
+										"value": "@item().LastModified",
+										"type": "DateTime"
+									}
+								}
 							},
-							"type": "DateTime"
+							"linkedServiceName": {
+								"referenceName": "ls_DB_sp",
+								"type": "LinkedServiceReference"
+							}
 						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "ls_DB_sp",
-					"type": "LinkedServiceReference"
+					]
 				}
 			}
 		],
+		"variables": {
+			"FileMetadataArray": {
+				"type": "Array"
+			}
+		},
 		"annotations": []
 	}
 }
