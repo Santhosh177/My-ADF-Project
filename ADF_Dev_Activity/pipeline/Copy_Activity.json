@@ -155,7 +155,7 @@
 						"type": "Expression"
 					},
 					"condition": {
-						"value": "@or(\n    not(contains(activity('Lookup1').output.value, item().name)),\n    and(\n        equals(item().name, activity('Lookup1').output.firstRow.filename),\n        greater(item().lastModified, activity('Lookup1').output.firstRow.lastmodifiedtimestamp)\n    )\n)\n",
+						"value": "@or(\n    not(contains(array(activity('Lookup1').output.value), item().name)),\n    greater(item().lastModified, item().lastModifiedTimestamp)\n)",
 						"type": "Expression"
 					}
 				}
@@ -271,11 +271,17 @@
 								"storedProcedureName": "[dbo].[sp_insert_file_tracking]",
 								"storedProcedureParameters": {
 									"FileName": {
-										"value": "@item().FileName",
+										"value": {
+											"value": "@item().FileName",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"LastModifiedTimestamp": {
-										"value": "@item().LastModified",
+										"value": {
+											"value": "@item().LastModified",
+											"type": "Expression"
+										},
 										"type": "DateTime"
 									}
 								}
