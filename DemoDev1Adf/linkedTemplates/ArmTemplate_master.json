@@ -51,6 +51,10 @@
 			"type": "string",
 			"defaultValue": "adminn"
 		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://reqres.in/api/users"
+		},
 		"ls_DB_sink_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://transformed1storage.dfs.core.windows.net/"
@@ -65,7 +69,7 @@
 		},
 		"ls_DB_sp_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "adminn"
+			"defaultValue": "admins"
 		},
 		"ls_copy_files_properties_typeProperties_host": {
 			"type": "string",
@@ -166,6 +170,9 @@
 					},
 					"LS_DB_cloud_properties_typeProperties_userName": {
 						"value": "[parameters('LS_DB_cloud_properties_typeProperties_userName')]"
+					},
+					"RestService1_properties_typeProperties_url": {
+						"value": "[parameters('RestService1_properties_typeProperties_url')]"
 					},
 					"ls_DB_sink_properties_typeProperties_url": {
 						"value": "[parameters('ls_DB_sink_properties_typeProperties_url')]"
