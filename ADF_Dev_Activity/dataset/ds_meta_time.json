@@ -2,7 +2,7 @@
 	"name": "ds_meta_time",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_meta_time.",
+			"referenceName": "ls_meta_time",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
