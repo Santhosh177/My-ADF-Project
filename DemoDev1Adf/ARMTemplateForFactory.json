@@ -365,7 +365,7 @@
 						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "Wait_next_activity",
+								"activity": "ForEach",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -415,22 +415,6 @@
 									}
 								}
 							]
-						}
-					},
-					{
-						"name": "Wait_next_activity",
-						"type": "Wait",
-						"dependsOn": [
-							{
-								"activity": "ForEach",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"waitTimeInSeconds": 600
 						}
 					}
 				],
