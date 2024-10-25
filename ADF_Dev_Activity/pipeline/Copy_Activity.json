@@ -215,7 +215,7 @@
 							}
 						},
 						{
-							"name": "Append_variable",
+							"name": "Append_variables",
 							"type": "AppendVariable",
 							"dependsOn": [
 								{
