@@ -1,0 +1,28 @@
+{
+	"name": "Excel1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sheetname": {
+				"type": "int"
+			}
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ADF and Databrcks questions.xlsx",
+				"fileSystem": "sample"
+			},
+			"sheetIndex": {
+				"value": "@dataset().sheetname",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}
