@@ -5,6 +5,12 @@
 		"factoryName": {
 			"value": "DemoDev1Adf"
 		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage2_accountKey": {
+			"value": ""
+		},
 		"LS_DB_cloud_password": {
 			"value": ""
 		},
@@ -28,6 +34,12 @@
 		},
 		"ls_sink_file_accountKey": {
 			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://transformed1storage.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"value": "https://transformed1storage.dfs.core.windows.net/"
 		},
 		"LS_DB_cloud_properties_typeProperties_server": {
 			"value": "connection-server.database.windows.net"
